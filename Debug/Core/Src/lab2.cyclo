@@ -1,0 +1,15 @@
+../Core/Src/lab2.c:17:6:init_system	1
+../Core/Src/lab2.c:24:6:Led_Debug	2
+../Core/Src/lab2.c:31:6:Led_Y0	2
+../Core/Src/lab2.c:40:6:Led_Y1	2
+../Core/Src/lab2.c:49:6:test7Seg	1
+../Core/Src/lab2.c:57:6:initLab2Bai1	1
+../Core/Src/lab2.c:62:6:runLab2Bai1	2
+../Core/Src/lab2.c:74:6:initLab2Bai2	1
+../Core/Src/lab2.c:80:6:runLab2Bai2	1
+../Core/Src/lab2.c:86:6:initLab2Bai3	1
+../Core/Src/lab2.c:98:6:runLab2Bai3	1
+../Core/Src/lab2.c:104:6:initLab2Bai4	1
+../Core/Src/lab2.c:112:6:runLab2Bai4	1
+../Core/Src/lab2.c:118:6:initLab2Bai5	1
+../Core/Src/lab2.c:125:6:runLab2Bai5	1

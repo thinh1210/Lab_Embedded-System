@@ -1,0 +1,10 @@
+../Core/Src/led_7seg.c:27:6:led7segInit	1
+../Core/Src/led_7seg.c:38:6:led7segDisplay	5
+../Core/Src/led_7seg.c:85:6:led7segSetDigit	3
+../Core/Src/led_7seg.c:101:6:led7segSetColon	2
+../Core/Src/led_7seg.c:118:6:leg7segOn	3
+../Core/Src/led_7seg.c:135:6:leg7segOff	3
+../Core/Src/led_7seg.c:146:6:toggleColon	1
+../Core/Src/led_7seg.c:153:6:shiftRightLed7	2
+../Core/Src/led_7seg.c:162:6:initTime	1
+../Core/Src/led_7seg.c:171:6:updateTime	3

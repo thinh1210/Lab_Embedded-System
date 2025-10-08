@@ -1,0 +1,3 @@
+../Core/Src/button.c:24:6:buttonInit	1
+../Core/Src/button.c:35:6:buttonScan	9
+../Core/Src/button.c:68:10:buttonGetState	1

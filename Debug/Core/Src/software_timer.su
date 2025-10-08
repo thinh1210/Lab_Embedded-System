@@ -1,0 +1,10 @@
+../Core/Src/software_timer.c:29:6:timer2Init	8	static
+../Core/Src/software_timer.c:34:6:timer3Init	4	static
+../Core/Src/software_timer.c:38:6:timer4Init	4	static
+../Core/Src/software_timer.c:46:6:timer2Setup	16	static
+../Core/Src/software_timer.c:52:6:timer3Setup	16	static
+../Core/Src/software_timer.c:58:6:timer4Setup	16	static
+../Core/Src/software_timer.c:65:6:initfullTask	16	static
+../Core/Src/software_timer.c:80:6:timerInit	24	static
+../Core/Src/software_timer.c:100:6:doTask	16	static
+../Core/Src/software_timer.c:125:6:HAL_TIM_PeriodElapsedCallback	24	static
