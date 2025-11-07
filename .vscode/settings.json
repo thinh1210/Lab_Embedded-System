@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.dbclient-js": "javascript",
+        "led_7seg.h": "c",
+        "tim.h": "c",
+        "main.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "spi.h": "c",
+        "stm32f4xx_hal_conf.h": "c",
+        "software_timer.h": "c",
+        "button.h": "c"
+    }
+}

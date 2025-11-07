@@ -8,13 +8,13 @@ uint8_t timer2Flag = 0;
 uint16_t timer2Count = 0;
 uint16_t timer2Mul = 0;
 
-uint8_t timer3Flag = 0;
-uint16_t timer3Count = 0;
-uint16_t timer3Mul = 0;
-
-uint8_t timer4Flag = 0;
-uint16_t timer4Count = 0;
-uint16_t timer4Mul = 0;
+// uint8_t timer3Flag = 0;
+// uint16_t timer3Count = 0;
+// uint16_t timer3Mul = 0;
+//
+// uint8_t timer4Flag = 0;
+// uint16_t timer4Count = 0;
+// uint16_t timer4Mul = 0;
 
 Softwaretimer task[MAX_TASK];
 
@@ -31,14 +31,6 @@ void timer2Init(void)
 	HAL_TIM_Base_Start_IT(&htim2);
 }
 
-void timer3Init(void)
-{
-	//	HAL_TIM_Base_Start_IT(&htim3);
-}
-void timer4Init(void)
-{
-	//	HAL_TIM_Base_Start_IT(&htim4);
-}
 /**
  * @brief Setup timer interupt
  */
@@ -48,18 +40,6 @@ void timer2Setup(int ms)
 	timer2Mul = ms / TIMER_CYCLE_2;
 	timer2Flag = 0;
 	timer2Count = timer2Mul;
-}
-void timer3Setup(int ms)
-{
-	timer3Mul = ms / TIMER_CYCLE_3;
-	timer3Flag = 0;
-	timer3Count = timer3Mul;
-}
-void timer4Setup(int ms)
-{
-	timer4Mul = ms / TIMER_CYCLE_4;
-	timer4Flag = 0;
-	timer4Count = timer4Mul;
 }
 
 void initfullTask(void)
@@ -88,17 +68,13 @@ void timerInit(uint8_t index, uint16_t period, uint16_t counter, void (*callback
 		task[index].active = 1;
 		task[index].flag = 0;
 	}
-	//	task0.period=period;
-	//	task0.counter=counter;
-	//	task0.callback=callback;
-	//	task0.active=1;
-	//	task0.flag=0;
 }
 
 /** @brief do task with flag
  * */
 void doTask()
 {
+
 	if (globalFlag)
 	{
 		for (uint8_t i = 0; i < MAX_TASK; i++)
@@ -114,6 +90,21 @@ void doTask()
 		//		task0.flag=0;
 	}
 	globalFlag = 0;
+}
+
+void disableTask(uint8_t pos)
+{
+	if (pos < MAX_TASK && pos >= 0)
+	{
+		task[pos].active = 0;
+	}
+}
+void enableTask(uint8_t pos)
+{
+	if (pos < MAX_TASK && pos >= 0)
+	{
+		task[pos].active = 1;
+	}
 }
 
 /**
@@ -140,7 +131,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			if (task[i].active == 0)
 				continue;
 			task[i].counter -= 1;
-			if (task[i].counter <= 0)
+			if (task[i].counter <= 0 && task[i].period > 0)
 			{
 				task[i].counter = task[i].period;
 				task[i].flag = 1;

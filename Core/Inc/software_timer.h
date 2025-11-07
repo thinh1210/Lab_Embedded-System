@@ -9,26 +9,24 @@
 #define TIMER_CYCLE_2 1
 #define TIMER_CYCLE_3 1
 #define TIMER_CYCLE_4 1
-#define MAX_TASK 	  5
-
+#define MAX_TASK 10
 
 /*Enum   --------------------------------------------*/
 
 /*Struct --------------------------------------------*/
-typedef struct{
+typedef struct
+{
 	uint16_t period;
 	uint16_t counter;
-	uint8_t 	 active;
-	uint8_t 	 flag;
+	uint8_t active;
+	uint8_t flag;
 	void (*callback)(void);
-}Softwaretimer;
+} Softwaretimer;
 
 /*Variables------------------------------------------*/
 
-
-
 extern Softwaretimer task[MAX_TASK];
-//extern Softwaretimer task0;
+// extern Softwaretimer task0;
 extern uint8_t timer2Flag;
 extern uint8_t timer3Flag;
 extern uint8_t timer4Flag;
@@ -40,17 +38,16 @@ extern uint8_t globalFlag;
 /*Function -------------------------------------------*/
 
 void timer2Init(void);
-void timer3Init(void);
-void timer4Init(void);
-
+// void timer3Init(void);
+// void timer4Init(void);
 
 /*Function setup Timer*/
-void timer1Setup(int ms);
 void timer2Setup(int ms);
-void timer3Setup(int ms);
 
 void initfullTask(void);
-void timerInit(uint8_t index, uint16_t period, uint16_t counter, void (*callback) (void));
+void timerInit(uint8_t index, uint16_t period, uint16_t counter, void (*callback)(void));
 void doTask();
+void disableTask(uint8_t pos);
+void enableTask(uint8_t pos);
 
 #endif

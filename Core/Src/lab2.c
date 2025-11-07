@@ -105,9 +105,9 @@ void initLab2Bai4(void)
 {
 	timer2Init();
 	initTime(13, 0);
-	timerInit(0, 5, 5, led7segDisplay);
+	timerInit(0, 2, 2, led7segDisplay);
 	timerInit(1, 250, 250, toggleColon);  // f=2hz -> each number: 500ms
-	timerInit(2, 1000, 1000, updateTime); // to simulate need to change the period and counter to 1000
+	timerInit(2, 60000, 60000, updateTime); // to simulate need to change the period and counter to 1000
 }
 void runLab2Bai4(void)
 {

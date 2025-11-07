@@ -1,0 +1,17 @@
+../Core/Src/lab3.c:26:6:Background	1
+../Core/Src/lab3.c:48:6:initlab3	1
+../Core/Src/lab3.c:70:6:runlab3	1
+../Core/Src/lab3.c:75:6:fsmlab3	10
+../Core/Src/lab3.c:112:6:updateMode	5
+../Core/Src/lab3.c:165:6:saveMode	6
+../Core/Src/lab3.c:200:6:upTime	2
+../Core/Src/lab3.c:208:6:clearLed	1
+../Core/Src/lab3.c:217:6:taskBlinkLed	8
+../Core/Src/lab3.c:264:6:updatetimer	3
+../Core/Src/lab3.c:274:6:comeBackTask	5
+../Core/Src/lab3.c:321:6:updateDisplayNumbers	1
+../Core/Src/lab3.c:326:6:switchTLToNextState	5
+../Core/Src/lab3.c:373:6:NSGo	1
+../Core/Src/lab3.c:384:6:NSYellow	1
+../Core/Src/lab3.c:397:6:EWGo	1
+../Core/Src/lab3.c:410:6:EWYellow	1
