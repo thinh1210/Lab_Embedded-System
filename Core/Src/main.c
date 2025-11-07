@@ -32,6 +32,7 @@
 #include "lcd.h"
 #include "picture.h"
 #include "button.h"
+#include "uart.h"
 #include "lab2.h"
 #include "lab3.h"
 /* USER CODE END Includes */
@@ -65,6 +66,10 @@ int IsButtonUp();
 int IsButtonDown();
 void TestButtonMatrix();
 void TestLcd();
+void test_Uart();
+uint32_t ds3231_hours = 12;
+uint32_t ds3231_min = 0;
+uint32_t ds3231_sec = 0;
 
 /* USER CODE END PFP */
 
@@ -74,9 +79,9 @@ void TestLcd();
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
 
@@ -117,8 +122,12 @@ int main(void)
   //  lcd_init();
   //  Background();
 
-  initlab3();
-
+  // initlab3();
+  timer2Init();
+  lcd_init();
+  buttonInit();
+  //  timerInit(0, 500, 500, test_Uart);
+  uart_init_rs232();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -128,32 +137,43 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  runlab3();
-
     /* USER CODE BEGIN 3 */
 
     //    runLab2Bai5();
+	  //test uart library
+//    if (flag_buffer == 1)
+//    {
+//
+//      // Đã nhận xong! Xử lý tin nhắn trong 'msg'
+//      // Ví dụ: gửi lại chính tin nhắn đó
+//      uart_Rs232SendString("Tin nhan da nhan: ");
+//      uart_Rs232SendString((const char *)msg);
+//      uart_Rs232SendString("\r\n");
+//
+//      // Rất quan trọng: Xóa cờ sau khi đã xử lý xong
+//      flag_buffer = 0;
+//    }
   }
   /* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -169,9 +189,8 @@ void SystemClock_Config(void)
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -219,33 +238,24 @@ void TestButtonMatrix()
   }
 }
 
-// void TestLcd()
-// {
-//   lcd_fill(0, 0, 240, 320, BLACK);
-
-//   //  lcd_show_string_center(0, 2, "Hello World !!!", RED, BLACK, 16, 1);
-//   //  lcd_show_string(20, 30, "Test LCD Screen", WHITE, BLACK, 32, 0);
-//   lcd_show_string(5, 5, "MODE", WHITE, BLACK, 16, 1);
-
-//   lcd_show_string(0, 40, "LIGHT 1", RED, BLACK, 16, 1);
-//   lcd_draw_circle(40, 80, GREEN, 10, 1);
-//   lcd_draw_circle(80, 80, RED, 10, 1);
-//   lcd_draw_circle(120, 80, YELLOW, 10, 1);
-//   lcd_show_int_num(120, 100, 30, 2, BLUE, BLACK, 16);
-
-//   lcd_show_string(0, 120, "LIGHT 2", RED, BLACK, 16, 1);
-//   lcd_draw_circle(40, 160, GREEN, 10, 1);
-//   lcd_draw_circle(80, 160, RED, 10, 1);
-//   lcd_draw_circle(120, 160, YELLOW, 10, 1);
-
-//   //  lcd_show_picture(80, 240, 90, 90, gImageLogo);
-// }
+void test_Uart()
+{
+  if (buttonGetState(BUTTON_EN))
+  {
+    uart_Rs232SendNum(ds3231_hours);
+    uart_Rs232SendString(":");
+    uart_Rs232SendNum(ds3231_min);
+    uart_Rs232SendString(":");
+    uart_Rs232SendNum(ds3231_sec);
+    uart_Rs232SendString("\n");
+  }
+}
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -258,12 +268,12 @@ void Error_Handler(void)
 }
 #ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
