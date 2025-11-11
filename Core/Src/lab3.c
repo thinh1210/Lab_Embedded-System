@@ -50,7 +50,7 @@ void initlab3(void)
     timer2Init();
     lcd_init();
     buttonInit();
-    timerInit(0, 50, 50, buttonScan);
+    timerInit(0, 30, 30, buttonScan);
     timerInit(1, 100, 100, fsmlab3);
     timerInit(2, 1000, 1000, updatetimer);
     timerInit(3, 250, 250, taskBlinkLed);
@@ -74,9 +74,9 @@ void runlab3(void)
 
 void fsmlab3(void)
 {
-    isChangemode = buttonGetState(BUTTON_1);
-    isSave = buttonGetState(BUTTON_2);
-    isUp = buttonGetState(BUTTON_UP);
+    isChangemode = buttonFirstPress(BUTTON_1);
+    isSave = buttonFirstPress(BUTTON_2);
+    isUp = buttonFirstPress(BUTTON_UP);
     button_trigger = isChangemode || isSave || isUp;
     if (button_trigger == 1)
     {
@@ -93,7 +93,7 @@ void fsmlab3(void)
             isSave = 0;
             lcd_show_string(50, 5, DELETE_FILL, WHITE, BLACK, 16, 0);
             saveMode();
-                }
+        }
         if (isUp)
         {
             isUp = 0;
@@ -203,6 +203,11 @@ void upTime(void)
         return;
     numberLight1++;
     numberLight2++;
+    if (numberLight1 > 99 && numberLight2 > 99)
+    {
+        numberLight1 = 0;
+        numberLight2 = 0;
+    }
 }
 
 void clearLed()

@@ -8,6 +8,7 @@
         "spi.h": "c",
         "stm32f4xx_hal_conf.h": "c",
         "software_timer.h": "c",
-        "button.h": "c"
+        "button.h": "c",
+        "lab3.h": "c"
     }
 }

@@ -6,6 +6,11 @@
   },
   {
     "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
+    "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/ds3232.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Core/Src/ds3232.o\"",
+    "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/ds3232.c"
+  },
+  {
+    "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
     "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/fsmc.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Core/Src/fsmc.o\"",
     "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/fsmc.c"
   },
@@ -13,6 +18,11 @@
     "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
     "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/gpio.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Core/Src/gpio.o\"",
     "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/gpio.c"
+  },
+  {
+    "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
+    "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/i2c.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Core/Src/i2c.o\"",
+    "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/i2c.c"
   },
   {
     "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
@@ -153,6 +163,16 @@
     "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
     "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o\"",
     "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c"
+  },
+  {
+    "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
+    "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o\"",
+    "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c"
+  },
+  {
+    "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
+    "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.o\"",
+    "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c"
   },
   {
     "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",

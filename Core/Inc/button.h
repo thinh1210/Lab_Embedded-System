@@ -10,8 +10,14 @@
 /* Includes */
 #include <stdint.h>
 
+/* Define */
+#define TIME_TO_LONG_PRESS 40
+#define TIME_TRIGGER_LONG_PRESS 4
 /* Variables */
 extern uint16_t buttonCount[16];
+extern uint8_t longPressFlag;
+extern uint8_t longPressTrigger;
+extern uint8_t lastState[16];
 typedef enum
 {
     BUTTON_0 = 0,
@@ -32,11 +38,11 @@ typedef enum
     BUTTON_BACK,
 } BUTTON;
 
-
 /* Function */
 
-extern void buttonInit(void);
-extern void buttonScan(void);
-extern uint16_t buttonGetState(BUTTON pos);
-
+void buttonInit(void);
+void buttonScan(void);
+uint16_t buttonGetState(BUTTON pos);
+void checkLongPress(BUTTON pos);
+uint8_t buttonFirstPress(uint8_t pos);
 #endif /* INC_BUTTON_H_ */

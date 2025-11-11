@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -33,6 +34,7 @@
 #include "picture.h"
 #include "button.h"
 #include "uart.h"
+#include "ds3231.h"
 #include "lab2.h"
 #include "lab3.h"
 /* USER CODE END Includes */
@@ -67,9 +69,11 @@ int IsButtonDown();
 void TestButtonMatrix();
 void TestLcd();
 void test_Uart();
-uint32_t ds3231_hours = 12;
-uint32_t ds3231_min = 0;
-uint32_t ds3231_sec = 0;
+void updateTime_ds3231();
+void displayTime();
+// uint32_t ds3231_hours = 12;
+// uint32_t ds3231_min = 0;
+// uint32_t ds3231_sec = 0;
 
 /* USER CODE END PFP */
 
@@ -111,6 +115,7 @@ int main(void)
   MX_TIM2_Init();
   MX_FSMC_Init();
   MX_USART1_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
 #define DEBUG_LED_TIMER 0
@@ -122,16 +127,37 @@ int main(void)
   //  lcd_init();
   //  Background();
 
-  // initlab3();
+  //  initlab3();
   timer2Init();
   lcd_init();
   buttonInit();
-  //  timerInit(0, 500, 500, test_Uart);
-  uart_init_rs232();
+  updateTime();
+  timerInit(0, 100, 100, ds3231_ReadTime);
+  timerInit(1, 50, 50, buttonScan);
+  timerInit(2, 200, 200, displayTime);
+  lcd_clear(BLACK);
+
+
+
+//  uart_init_rs232();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  // example
+//  ds3231_SetAlarm1(ALARM_SKIP, // Bỏ qua Ngày
+//                   0,          // (isDayOfWeek = false)
+//                   ALARM_SKIP, // Bỏ qua Giờ
+//                   ALARM_SKIP, // Bỏ qua Phút
+//                   0);         // Chỉ so khớp Giây = 00
+//
+//  // BẠN CŨNG CẦN BẬT NGẮT ALARM TRONG THANH GHI CONTROL (0x0E)
+//  // (Hàm ds3231_Write của bạn có vẻ bị lỗi, nên ta dùng HAL trực tiếp)
+//  uint8_t control_reg = 0x05; // 0x05 = A1IE + A2IE + INTCN
+//  HAL_I2C_Mem_Write(&hi2c1, DS3231_ADDRESS, 0x0E, I2C_MEMADD_SIZE_8BIT, &control_reg, 1, 100);
+//  // Xóa cờ cũ (nếu có)
+
 
   while (1)
   {
@@ -139,20 +165,21 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    //    runLab2Bai5();
-	  //test uart library
-//    if (flag_buffer == 1)
-//    {
-//
-//      // Đã nhận xong! Xử lý tin nhắn trong 'msg'
-//      // Ví dụ: gửi lại chính tin nhắn đó
-//      uart_Rs232SendString("Tin nhan da nhan: ");
-//      uart_Rs232SendString((const char *)msg);
-//      uart_Rs232SendString("\r\n");
-//
-//      // Rất quan trọng: Xóa cờ sau khi đã xử lý xong
-//      flag_buffer = 0;
-//    }
+    // 1. ĐỌC TÍN HIỆU
+
+    // test uart and buffer
+    //   if (flag_buffer == 1)
+    //   {
+
+    //    // Đã nhận xong! Xử lý tin nhắn trong 'msg'
+    //    // Ví dụ: gửi lại chính tin nhắn đó
+    //    uart_Rs232SendString("Tin nhan da nhan: ");
+    //    uart_Rs232SendString((const char *)msg);
+    //    uart_Rs232SendString("\r\n");
+
+    //    // Rất quan trọng: Xóa cờ sau khi đã xử lý xong
+    //    flag_buffer = 0;
+    //  }
   }
   /* USER CODE END 3 */
 }
@@ -204,6 +231,26 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+void displayTime()
+{
+  lcd_show_int_num(70, 100, ds3231_hours, 2, GREEN, BLACK, 24);
+  lcd_show_int_num(110, 100, ds3231_min, 2, GREEN, BLACK, 24);
+  lcd_show_int_num(150, 100, ds3231_sec, 2, GREEN, BLACK, 24);
+  lcd_show_int_num(20, 130, ds3231_day, 2, YELLOW, BLACK, 24);
+  lcd_show_int_num(70, 130, ds3231_date, 2, YELLOW, BLACK, 24);
+  lcd_show_int_num(110, 130, ds3231_month, 2, YELLOW, BLACK, 24);
+  lcd_show_int_num(150, 130, ds3231_year, 2, YELLOW, BLACK, 24);
+}
+void updateTime_ds3231()
+{
+  ds3231_Write(ADDRESS_YEAR, 23);
+  ds3231_Write(ADDRESS_MONTH, 10);
+  ds3231_Write(ADDRESS_DATE, 20);
+  ds3231_Write(ADDRESS_DAY, 6);
+  ds3231_Write(ADDRESS_HOUR, 20);
+  ds3231_Write(ADDRESS_MIN, 11);
+  ds3231_Write(ADDRESS_SEC, 23);
+}
 /*code to test the ssytem */
 // Button example 1: a button is pressed 1 time (50ms).
 int IsButtonDown()
