@@ -35,8 +35,9 @@
 #include "button.h"
 #include "uart.h"
 #include "ds3231.h"
-#include "lab2.h"
-#include "lab3.h"
+#include "lab4.h"
+// #include "lab2.h"
+// #include "lab3.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -128,41 +129,40 @@ int main(void)
   //  Background();
 
   //  initlab3();
-  timer2Init();
-  lcd_init();
-  buttonInit();
-  updateTime();
-  timerInit(0, 100, 100, ds3231_ReadTime);
-  timerInit(1, 50, 50, buttonScan);
-  timerInit(2, 200, 200, displayTime);
-  lcd_clear(BLACK);
 
+  // timer2Init();
+  // lcd_init();
+  // buttonInit();
+  // updateTime();
+  // timerInit(0, 100, 100, ds3231_ReadTime);
+  // timerInit(1, 50, 50, buttonScan);
+  // timerInit(2, 200, 200, displayTime);
+  // lcd_clear(BLACK);
 
-
-//  uart_init_rs232();
+  initLab4();
+  //  uart_init_rs232();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   // example
-//  ds3231_SetAlarm1(ALARM_SKIP, // Bỏ qua Ngày
-//                   0,          // (isDayOfWeek = false)
-//                   ALARM_SKIP, // Bỏ qua Giờ
-//                   ALARM_SKIP, // Bỏ qua Phút
-//                   0);         // Chỉ so khớp Giây = 00
-//
-//  // BẠN CŨNG CẦN BẬT NGẮT ALARM TRONG THANH GHI CONTROL (0x0E)
-//  // (Hàm ds3231_Write của bạn có vẻ bị lỗi, nên ta dùng HAL trực tiếp)
-//  uint8_t control_reg = 0x05; // 0x05 = A1IE + A2IE + INTCN
-//  HAL_I2C_Mem_Write(&hi2c1, DS3231_ADDRESS, 0x0E, I2C_MEMADD_SIZE_8BIT, &control_reg, 1, 100);
-//  // Xóa cờ cũ (nếu có)
-
+  //  ds3231_SetAlarm1(ALARM_SKIP, // Bỏ qua Ngày
+  //                   0,          // (isDayOfWeek = false)
+  //                   ALARM_SKIP, // Bỏ qua Giờ
+  //                   ALARM_SKIP, // Bỏ qua Phút
+  //                   0);         // Chỉ so khớp Giây = 00
+  //
+  //  // BẠN CŨNG CẦN BẬT NGẮT ALARM TRONG THANH GHI CONTROL (0x0E)
+  //  // (Hàm ds3231_Write của bạn có vẻ bị lỗi, nên ta dùng HAL trực tiếp)
+  //  uint8_t control_reg = 0x05; // 0x05 = A1IE + A2IE + INTCN
+  //  HAL_I2C_Mem_Write(&hi2c1, DS3231_ADDRESS, 0x0E, I2C_MEMADD_SIZE_8BIT, &control_reg, 1, 100);
+  //  // Xóa cờ cũ (nếu có)
 
   while (1)
   {
     /* USER CODE END WHILE */
-
+    doTask();
     /* USER CODE BEGIN 3 */
 
     // 1. ĐỌC TÍN HIỆU

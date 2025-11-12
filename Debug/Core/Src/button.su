@@ -1,5 +1,5 @@
 ../Core/Src/button.c:30:6:buttonInit	8	static
 ../Core/Src/button.c:34:10:buttonGetState	24	static
 ../Core/Src/button.c:46:6:buttonScan	16	static
-../Core/Src/button.c:94:6:checkLongPress	24	static
-../Core/Src/button.c:127:9:buttonFirstPress	24	static
+../Core/Src/button.c:93:6:checkLongPress	24	static
+../Core/Src/button.c:126:9:buttonFirstPress	24	static

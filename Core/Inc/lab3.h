@@ -64,6 +64,7 @@ void Background(void);
 void initlab3(void);
 void runlab3(void);
 
+
 /*Internal function */
 void fsmlab3(void);
 void updateDisplayNumbers(void);

@@ -36,6 +36,11 @@
   },
   {
     "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
+    "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/lab4.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Core/Src/lab4.o\"",
+    "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/lab4.c"
+  },
+  {
+    "directory": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT",
     "command": "arm-none-eabi-gcc \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/lcd.c\" -mcpu\u003dcortex-m4 -std\u003dgnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs\u003dnano.specs -mfpu\u003dfpv4-sp-d16 -mfloat-abi\u003dhard -mthumb -o \"C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Debug/Core/Src/lcd.o\"",
     "file": "C:/Users/Divu/STM32CubeIDE/workspace_1.19.0/BKIT/Core/Src/lcd.c"
   },

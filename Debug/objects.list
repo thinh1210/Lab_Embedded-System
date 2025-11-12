@@ -5,6 +5,7 @@
 "./Core/Src/i2c.o"
 "./Core/Src/lab2.o"
 "./Core/Src/lab3.o"
+"./Core/Src/lab4.o"
 "./Core/Src/lcd.o"
 "./Core/Src/led.o"
 "./Core/Src/led_7seg.o"

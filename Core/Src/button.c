@@ -14,7 +14,7 @@
 uint16_t buttonCount[16] = {0};
 uint8_t lastState[16] = {0};
 static uint16_t buttonSpiBuffer = 0x0000;
-uint8_t buttonPos[16] = {14, 0, 1, 2, 7, 6, 5, 8, 9, 10, 3, 4, 11, 12, 15, 13};
+uint8_t buttonPos[16] = {13, 0, 1, 2, 4, 5, 6, 8, 9, 10, 3, 7, 11, 15, 12, 14};
 uint8_t buttonInx = 0;
 uint8_t longPressFlag = 0;
 uint8_t longPressTrigger = 0;
@@ -80,7 +80,6 @@ void buttonScan()
             buttonCount[buttonInx]++;
         mask = mask >> 1;
     }
-
     checkLongPress(BUTTON_UP);
 }
 
@@ -127,6 +126,7 @@ void checkLongPress(BUTTON pos)
 uint8_t buttonFirstPress(uint8_t pos)
 {
     uint8_t stateIndex = buttonPos[pos];
+
     if (lastState[stateIndex] == 1)
         return 0;
     uint16_t nowState = buttonCount[stateIndex];

@@ -1,6 +1,8 @@
-../Core/Src/ds3232.c:25:6:ds3231_init	2
-../Core/Src/ds3232.c:41:6:ds3231_Write	1
-../Core/Src/ds3232.c:47:6:ds3231_ReadTime	1
-../Core/Src/ds3232.c:62:6:ds3231_SetAlarm1	6
-../Core/Src/ds3232.c:126:6:ds3231_ReadAlarmFlags	1
-../Core/Src/ds3232.c:147:6:ds3231_ClearAlarmFlags	1
+../Core/Src/ds3232.c:36:6:ds3231_init	2
+../Core/Src/ds3232.c:52:6:ds3231_Write	1
+../Core/Src/ds3232.c:58:6:ds3231_ReadTime	1
+../Core/Src/ds3232.c:73:6:ds3231_SetAlarm1	6
+../Core/Src/ds3232.c:137:6:ds3231_ReadAlarmFlags	1
+../Core/Src/ds3232.c:158:6:ds3231_ClearAlarmFlags	1
+../Core/Src/ds3232.c:189:9:bcd2dec_hour_24h	3
+../Core/Src/ds3232.c:207:6:ds3231_ReadAlarmSettings	8

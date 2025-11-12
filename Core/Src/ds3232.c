@@ -27,6 +27,7 @@ uint8_t ds3231_a1_minute;
 uint8_t ds3231_a1_hour;
 uint8_t ds3231_a1_day;
 uint8_t ds3231_a1_isDayOfWeek;
+
 uint8_t ds3231_a2_minute;
 uint8_t ds3231_a2_hour;
 uint8_t ds3231_a2_day;
