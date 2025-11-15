@@ -70,9 +70,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 		// rs232 isr
 		// This is a simple echo-back
-//		HAL_UART_Transmit(&huart1, &receive_buffer1, 1, 10);
+		//		HAL_UART_Transmit(&huart1, &receive_buffer1, 1, 10);
 
-		 fsm_uart();
+		fsm_uart();
 		// Re-arm the receive interrupt
 		HAL_UART_Receive_IT(&huart1, &receive_buffer1, 1);
 	}
@@ -108,6 +108,7 @@ void fsm_uart(void)
 		}
 		else
 		{
+
 			// Vẫn là dữ liệu, thêm vào buffer
 			msg[buffer_index] = receive_buffer1;
 			buffer_index++;
@@ -116,6 +117,7 @@ void fsm_uart(void)
 			if (buffer_index >= 99)
 			{
 				// Tràn, hủy tin nhắn này và reset
+				uart_Rs232SendString("The bufffer just 99 char, please input again\r\n");
 				bufferState = STANDBY;
 				buffer_index = 0;
 			}

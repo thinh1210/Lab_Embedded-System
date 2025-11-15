@@ -36,6 +36,8 @@
 #include "uart.h"
 #include "ds3231.h"
 #include "lab4.h"
+#include "stdlib.h"
+#include "stdio.h"
 // #include "lab2.h"
 // #include "lab3.h"
 /* USER CODE END Includes */
@@ -129,23 +131,19 @@ int main(void)
   //  Background();
 
   //  initlab3();
+  initLab4();
 
   // timer2Init();
   // lcd_init();
   // buttonInit();
-  // updateTime();
-  // timerInit(0, 100, 100, ds3231_ReadTime);
-  // timerInit(1, 50, 50, buttonScan);
-  // timerInit(2, 200, 200, displayTime);
-  // lcd_clear(BLACK);
 
-  initLab4();
-  //  uart_init_rs232();
+  // uart_init_rs232();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   // example
   //  ds3231_SetAlarm1(ALARM_SKIP, // Bỏ qua Ngày
   //                   0,          // (isDayOfWeek = false)
@@ -162,26 +160,53 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    doTask();
+    runLab4();
     /* USER CODE BEGIN 3 */
 
-    // 1. ĐỌC TÍN HIỆU
-
     // test uart and buffer
-    //   if (flag_buffer == 1)
-    //   {
 
-    //    // Đã nhận xong! Xử lý tin nhắn trong 'msg'
-    //    // Ví dụ: gửi lại chính tin nhắn đó
-    //    uart_Rs232SendString("Tin nhan da nhan: ");
-    //    uart_Rs232SendString((const char *)msg);
-    //    uart_Rs232SendString("\r\n");
+    // 1. Kiểm tra xem FSM đã nhận xong tin nhắn chưa
 
-    //    // Rất quan trọng: Xóa cờ sau khi đã xử lý xong
-    //    flag_buffer = 0;
-    //  }
+    /*if (flag_buffer == 1)
+    {
+      flag_buffer = 0; // Xóa cờ ngay
+
+      char *end_ptr;
+      long received_value = strtol((const char *)msg, &end_ptr, 10);
+
+      // 1. Kiểm tra xem có phải là số hợp lệ không
+      if (end_ptr != (const char *)msg && *end_ptr == '\0')
+      {
+        // 2. Kiểm tra xem số có nằm trong dải của uint16_t không
+        if (received_value < 0 || received_value > 65535) // 65535 là giá trị max của uint16_t
+        {
+          // LỖI: Giá trị nằm ngoài dải cho phép
+          uart_Rs232SendString("Loi: So phai nam trong dai tu 0 den 65535.\r\n");
+        }
+        else
+        {
+          // THÀNH CÔNG: An toàn để ép kiểu
+          uint16_t my_number = (uint16_t)received_value;
+
+          // Ghi chú: Hàm uart_Rs232SendNum của bạn nhận uint32_t.
+          // Khi bạn truyền (uint16_t)my_number vào, C sẽ tự động
+          // "thăng hạng" (promote) nó lên uint32_t một cách an toàn.
+
+          uart_Rs232SendString("Ban da nhap so hop le: ");
+          uart_Rs232SendNum(my_number); // Gửi số đi
+          uart_Rs232SendString("\r\n");
+        }
+      }
+      else
+      {
+        // LỖI: Chuỗi nhập vào không phải là số
+        uart_Rs232SendString("Loi: Du lieu nhap vao khong phai la so.\r\n");
+      }
+    }
+    */
+
+    /* USER CODE END 3 */
   }
-  /* USER CODE END 3 */
 }
 
 /**

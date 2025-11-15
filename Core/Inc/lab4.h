@@ -30,6 +30,7 @@ typedef enum
     NORMAL,
     EDIT_TIME,
     EDIT_ALARM,
+    EDIT_TIME_BY_RS232
 } lAB4_MAIN_STATE;
 typedef enum
 {
@@ -41,6 +42,7 @@ typedef enum
     TIME_MONTH,
     TIME_YEAR,
 } TIME_LAB4;
+
 typedef enum
 {
     EDIT_TIME_SEC,
@@ -51,7 +53,7 @@ typedef enum
     EDIT_TIME_MONTH,
     EDIT_TIME_YEAR,
 } EDIT_TIME_STATE;
-// date auto update to
+// date auto update to use typef EDIT_TIME_STATE for two main state
 typedef enum
 {
     EDIT_ALARM_SEC,
@@ -118,6 +120,10 @@ void updateAlarmHour(void);
 void updateAlarmDate(void);
 void updateAlarmDay(void);
 
+void checkNumber(EDIT_TIME_STATE state);
+
+// other Task
+void taskResend(); // Check the main state in
 void blinkLed();
 void updateTimeLCD();
 void checkAlarm();

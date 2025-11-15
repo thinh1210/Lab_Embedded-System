@@ -52,7 +52,10 @@ void initLab4(void)
     edit_alarm_state = EDIT_ALARM_SEC;
     initNormal();
 }
-
+void runLab4()
+{
+    doTask();
+}
 void checkAlarm()
 {
     ds3231_ReadAlarmFlags();
@@ -234,7 +237,9 @@ void initNormal(void)
     lcd_show_string(0, 5, DELETE_FILL, BLACK, BLACK, 24, 0);
     lcd_show_string(0, 5, NORMAL_MODE, WHITE, BLACK, 24, 0);
     updateTimeLCD();
-    enableTask(5);  // enable task update information every seconds
+    ds3231_ClearAlarmFlags();
+    enableTask(5); // enable task update information every seconds
+    enableTask(1);
     disableTask(4); // disable task blink led
 }
 void initEditTime(void)
@@ -250,6 +255,7 @@ void initEditTime(void)
     displayLCD(bufferTime[TIME_YEAR], TIME_YEAR, 0);
     displayLCD(bufferTime[TIME_DAY], TIME_DAY, 0);
     edit_time_state = TIME_SEC;
+    disableTask(1);
     enableTask(4);  // enable task update information every seconds
     disableTask(5); // disable task blink led
 }
@@ -274,6 +280,7 @@ void initEditAlarm(void)
     displayLCD(bufferAlarm[EDIT_ALARM_DAY], TIME_MONTH, 1);
     displayLCD(bufferAlarm[EDIT_ALARM_DAY], TIME_YEAR, 1);
     edit_alarm_state = EDIT_ALARM_SEC;
+    disableTask(1);
     enableTask(4);  // enable task update information every seconds
     disableTask(5); // disable task blink led
 }
@@ -540,18 +547,19 @@ void editTimeFsm(void)
             isOnePress = 0;
             edit_time_state = EDIT_TIME_SEC;
             displayLCD(bufferTime[EDIT_TIME_YEAR], TIME_YEAR, 0);
-            if (isUPpress)
-            {
-                isUPpress = 0;
-                updateTimeYear();
-            }
-            if (longPressTrigger)
-            {
-                longPressTrigger = 0;
-                updateTimeYear();
-            }
+        }
+        if (isUPpress)
+        {
+            isUPpress = 0;
+            updateTimeYear();
+        }
+        if (longPressTrigger)
+        {
+            longPressTrigger = 0;
+            updateTimeYear();
+        }
 
-            break;
+        break;
         // case EDIT_TIME_DAY:
         //     if (isOnePress)
         //     {
@@ -559,7 +567,6 @@ void editTimeFsm(void)
         //         /* wrap around to first field */
         //         edit_time_state = EDIT_TIME_MONTH;
         //     } // switch mode
-
         //     if (isUPpress)
         //     {
         //         isUPpress = 0;
@@ -570,13 +577,12 @@ void editTimeFsm(void)
         //         longPressTrigger = 0;
         //         updateTimeDay();
         //     }
-
         //     break;
-        default:
-            break;
-        }
-        // displayLCD(bufferTime[edit_time_state], (TIME_LAB4)edit_time_state, 0);
+
+    default:
+        break;
     }
+    // displayLCD(bufferTime[edit_time_state], (TIME_LAB4)edit_time_state, 0);
 }
 void editAlarmFsm(void)
 {
@@ -793,7 +799,7 @@ void updateTimeMonth(void)
     {
         bufferTime[EDIT_TIME_MONTH] = 1;
     }
-    else if (bufferTime[EDIT_TIME_MONTH] == 0)
+    else if (bufferTime[EDIT_TIME_MONTH] <= 0)
     {
         bufferTime[EDIT_TIME_MONTH] = 1; // Đảm bảo bắt đầu từ 1
     }
@@ -806,6 +812,10 @@ void updateTimeYear(void)
 {
     bufferTime[EDIT_TIME_YEAR]++;
     if (bufferTime[EDIT_TIME_YEAR] > 99)
+    {
+        bufferTime[EDIT_TIME_YEAR] = 0;
+    }
+    else if (bufferTime[EDIT_TIME_YEAR] < 0)
     {
         bufferTime[EDIT_TIME_YEAR] = 0;
     }
