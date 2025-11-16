@@ -25,6 +25,7 @@ uint8_t isOnePress = 0;
 uint8_t isLongPress = 0;
 uint8_t isButtonPress = 0;
 uint8_t countAlarm = 0;
+
 lAB4_MAIN_STATE lab4_state = NORMAL;
 EDIT_TIME_STATE edit_time_state = EDIT_TIME_SEC;
 EDIT_ALARM_STATE edit_alarm_state = EDIT_ALARM_SEC;
@@ -42,7 +43,7 @@ void initLab4(void)
     timerInit(0, 200, 200, ds3231_ReadTime);
     timerInit(1, 1000, 1000, checkAlarm);
     timerInit(2, 50, 50, buttonScan);
-    timerInit(3, 100, 100, mainFsm);
+    timerInit(3, 100, 100, mainFsmLab4);
     timerInit(4, 250, 250, blinkLed);
     timerInit(5, 500, 500, updateTimeLCD);
     ds3231_ClearAlarmFlags();
@@ -52,10 +53,12 @@ void initLab4(void)
     edit_alarm_state = EDIT_ALARM_SEC;
     initNormal();
 }
+
 void runLab4()
 {
     doTask();
 }
+
 void checkAlarm()
 {
     ds3231_ReadAlarmFlags();
@@ -83,6 +86,7 @@ void checkAlarm()
         break;
     }
 }
+
 void displayLCD(uint8_t number, TIME_LAB4 pos, uint8_t hiden)
 {
     uint16_t x = 0;
@@ -136,6 +140,7 @@ void displayLCD(uint8_t number, TIME_LAB4 pos, uint8_t hiden)
             lcd_show_string(x, y, "--", YELLOW, BLACK, 24, 0);
     }
 }
+
 void blinkLed()
 {
     if (lab4_state == NORMAL)
@@ -145,15 +150,23 @@ void blinkLed()
     TIME_LAB4 pos_to_blink;
     uint16_t x = 0, y = 0;
 
-    if (lab4_state == EDIT_TIME)
+    switch (lab4_state)
     {
+    case EDIT_TIME:
+        /* code */
         pos_to_blink = (TIME_LAB4)edit_time_state;
         number = bufferTime[pos_to_blink];
-    }
-    else
-    {
+        break;
+    case EDIT_ALARM:
         pos_to_blink = (TIME_LAB4)edit_alarm_state;
         number = bufferAlarm[pos_to_blink];
+        break;
+    case EDIT_TIME_BY_RS232:
+        pos_to_blink = (TIME_LAB4)edit_time_rs232_state;
+        number = bufferTime[pos_to_blink];
+        break;
+    default:
+        break;
     }
 
     // *** LỖI CẦN SỬA: PHẢI LẤY TỌA ĐỘ X, Y ***
@@ -242,6 +255,7 @@ void initNormal(void)
     enableTask(1);
     disableTask(4); // disable task blink led
 }
+
 void initEditTime(void)
 {
     lcd_show_string(0, 5, DELETE_FILL, BLACK, BLACK, 24, 0);
@@ -285,7 +299,7 @@ void initEditAlarm(void)
     disableTask(5); // disable task blink led
 }
 
-void mainFsm(void)
+void mainFsmLab4(void)
 {
     //  BUTTONEN -> save all -> next into MAIN STATE
     //  BUTTON1 -> change edit element in tw o mode
@@ -327,6 +341,8 @@ void mainFsm(void)
         if (isNEXTpress)
         {
             isENpress = 0;
+            alarm_state = NO_ALARM;
+            lcd_show_string(0, 40, "ALARM!!!", BLACK, BLACK, 32, 0);
             lab4_state = EDIT_TIME;
             initEditTime();
             return;
@@ -403,7 +419,6 @@ void editTimeFsm(void)
     //  BUTTONEN -> save all -> next into MAIN STATE
     //  BUTTON1 -> change edit element in two mode
     // BUTTONBACK ->  don't need to check  -> alarm to ALARM SKIP -> next state when alarm skip
-
     //  BUTTONNEXT-> next into MAIN STATE
     //  BUTTONUP -> edit each  -> up for each kinds of time
     //  longpress -> update every
@@ -908,4 +923,473 @@ void updateAlarmDay(void)
     {
         bufferAlarm[EDIT_ALARM_DAY] = 1;
     }
+}
+
+/*-------------------------LAB 5 FROM HERE--------------------------------------*/
+EDIT_TIME_STATE edit_time_rs232_state = EDIT_TIME_SEC;
+
+uint8_t countResend = 0;
+uint8_t countTimeResend = 0;
+uint8_t triggerResend = 0;
+uint8_t triggerCallbackNormal = 0;
+uint8_t isTrigger = 0;
+/**
+ * @brief Kiểm tra xem một giá trị có phù hợp với trạng thái thời gian (state) hay không.
+ * @param state Trạng thái thời gian tương ứng (ví dụ: EDIT_TIME_SEC)
+ * @return Trả về 'value' (giá trị gốc) nếu nó hợp lệ.
+ * @return Trả về 'WRONG_VALUE' (255) nếu nó không hợp lệ.
+ */
+uint8_t checkNumber(EDIT_TIME_STATE state)
+{
+    long receive_value = 0;
+    char *end_ptr;
+    uint8_t value;
+    receive_value = strtol((const char *)msg, &end_ptr, 10);
+    if (end_ptr == (const char *)msg || *end_ptr != '\0')
+    {
+        return WRONG_VALUE;
+    }
+    else
+    {
+        // --- KIỂM TRA CÓ PHÙ HỢP VỚI uint8_t (0-255) KHÔNG ---
+        if (receive_value < 0 || receive_value > 255)
+        {
+            return WRONG_VALUE;
+        }
+        else
+        {
+            value = (uint8_t)receive_value;
+        }
+    }
+
+    switch (state)
+    {
+    // Giây và Phút có cùng quy tắc: 0-59
+    case EDIT_TIME_SEC:
+        if (value > 59)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    case EDIT_TIME_MIN:
+        if (value > 59)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    // Giờ: 0-23 (giả định đồng hồ 24 giờ)
+    case EDIT_TIME_HOUR:
+        if (value > 23)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    // Ngày trong tháng: 1-31
+    // (Lưu ý: Đây là kiểm tra cơ bản. Kiểm tra chính xác
+    // cần biết cả tháng và năm, ví dụ tháng 2 chỉ có 28/29 ngày)
+    case EDIT_TIME_DATE:
+        if (value < 1 || value > 31)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    // Ngày trong tuần: 1-7 (giả định 1=Chủ Nhật, ..., 7=Thứ Bảy)
+    case EDIT_TIME_DAY:
+        if (value < 1 || value > 7)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    // Tháng: 1-12
+    case EDIT_TIME_MONTH:
+        if (value < 1 || value > 12)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    // Năm: 0-99 (giả định RTC dùng 2 chữ số cho năm, 2000-2099)
+    case EDIT_TIME_YEAR:
+        if (value > 99)
+        {
+            return WRONG_VALUE;
+        }
+        break;
+
+    // Trạng thái không xác định
+    default:
+        return WRONG_VALUE;
+    }
+
+    // Nếu tất cả kiểm tra đều qua, giá trị là hợp lệ
+    return value;
+}
+
+void lcdWriteUpdateState(uint8_t hiden)
+{
+    // Ẩn dòng trạng thái (ghi đè bằng màu nền)
+    if (hiden)
+    {
+        // Đảm bảo chuỗi này đủ dài để che hết các chuỗi bên dưới
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        return;
+    }
+    // Hiển thị trạng thái tương ứng
+    switch (edit_time_rs232_state)
+    {
+    case EDIT_TIME_SEC:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting second", WHITE, BLACK, 24, 1);
+        break;
+
+    case EDIT_TIME_MIN:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting minute", WHITE, BLACK, 24, 1);
+        break;
+
+    case EDIT_TIME_HOUR:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting hour  ", WHITE, BLACK, 24, 1);
+        break;
+
+    case EDIT_TIME_DATE:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting date  ", WHITE, BLACK, 24, 1);
+        break;
+
+    case EDIT_TIME_DAY:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting day   ", WHITE, BLACK, 24, 1);
+        break;
+
+    case EDIT_TIME_MONTH:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting month ", WHITE, BLACK, 24, 1);
+        break;
+
+    case EDIT_TIME_YEAR:
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        lcd_show_string(0, 200, "Updatting year  ", WHITE, BLACK, 24, 1);
+        break;
+
+    default:
+        // Có thể ẩn đi nếu gặp state không mong muốn
+        lcd_show_string(0, 200, DELETE_FILL, BLACK, BLACK, 24, 0);
+        break;
+    }
+}
+
+void writeBackWrongValue(void)
+{
+    uart_Rs232SendString("Please input again your value is wrong!\r\n");
+}
+
+void writeBackBCTimeOut(void)
+{
+    uart_Rs232SendString("Please innput the value!\r\n");
+}
+
+void sendFirstRequest(void)
+{
+    switch (edit_time_rs232_state)
+    {
+    case EDIT_TIME_SEC:
+        /* code */
+        uart_Rs232SendString("Input Second \r\n");
+        break;
+    case EDIT_TIME_MIN:
+        /* code */
+        uart_Rs232SendString("Input Minute \r\n");
+        break;
+    case EDIT_TIME_HOUR:
+        /* code */
+        uart_Rs232SendString("Input Hour \r\n");
+        break;
+    case EDIT_TIME_DAY:
+        /* code */
+        uart_Rs232SendString("Input Day \r\n");
+        break;
+    case EDIT_TIME_MONTH:
+        /* code */
+        uart_Rs232SendString("Input Month \r\n");
+        break;
+    case EDIT_TIME_YEAR:
+        /* code */
+        uart_Rs232SendString("Input Year \r\n");
+        break;
+    case EDIT_TIME_DATE:
+        /* code */
+        uart_Rs232SendString("Input Date \r\n");
+        break;
+        //    case default:
+        //
+        //        break;
+    }
+}
+
+void taskResend()
+{
+    countResend--; // Countdown from 10
+    if (countResend <= 0)
+    {
+        triggerResend = 1;
+        countTimeResend += 1;
+        countResend = 10;
+        if (countTimeResend >= 3)
+        {
+            triggerCallbackNormal = 1;
+        }
+    }
+}
+
+void initEditTimeByRS232(void)
+{
+    lcd_show_string(0, 5, DELETE_FILL, BLACK, BLACK, 24, 0);
+    lcd_show_string(0, 5, EDIT_TIME_RS232_MODE, WHITE, BLACK, 24, 0);
+
+    displayLCD(bufferTime[TIME_SEC], TIME_SEC, 0);
+    displayLCD(bufferTime[TIME_MIN], TIME_MIN, 0);
+    displayLCD(bufferTime[TIME_HOUR], TIME_HOUR, 0);
+    displayLCD(bufferTime[TIME_DATE], TIME_DATE, 0);
+    displayLCD(bufferTime[TIME_MONTH], TIME_MONTH, 0);
+    displayLCD(bufferTime[TIME_YEAR], TIME_YEAR, 0);
+    displayLCD(bufferTime[TIME_DAY], TIME_DAY, 0);
+
+    lab4_state = EDIT_TIME_BY_RS232;
+    edit_time_rs232_state = EDIT_TIME_SEC;
+
+    flag_buffer = 0;
+    triggerResend = 0;
+    countResend = 10;
+
+    lcdWriteUpdateState(0);
+    sendFirstRequest();
+    disableTask(1);
+    enableTask(4);  // enable task update information every seconds
+    enableTask(6);  // enable task resend every
+    disableTask(5); // disable task blink led
+}
+
+void editTimeByRS232Fsm(void)
+{
+    // lcdWriteUpdateState(0);
+    if (flag_buffer == 1)
+    {
+        flag_buffer = 0;
+        uint8_t temp = checkNumber(edit_time_rs232_state);
+        if (temp == WRONG_VALUE)
+        {
+            writeBackWrongValue();
+            // Receive but don't have right value but it reset the counter
+            countResend = 10;
+            triggerResend = 0;
+            triggerCallbackNormal = 0;
+            countTimeResend = 0;
+            return;
+        }
+        bufferTime[edit_time_rs232_state] = temp;
+        displayLCD(bufferTime[edit_time_rs232_state], (TIME_LAB4)edit_time_rs232_state, 0);
+
+        countResend = 10;
+        triggerResend = 0;
+        triggerCallbackNormal = 0;
+        countTimeResend = 0;
+
+        edit_time_rs232_state = (edit_time_rs232_state + 1) % 7; // change state
+        sendFirstRequest();
+        return;
+    }
+    if (isOnePress)
+    {
+        isOnePress = 0;
+        displayLCD(bufferTime[edit_time_rs232_state], (TIME_LAB4)edit_time_rs232_state, 0);
+        edit_time_rs232_state = (edit_time_rs232_state + 1) % 7; // change state
+        sendFirstRequest();
+        lcdWriteUpdateState(0);
+        return;
+    }
+    if (isENpress)
+    {
+        isENpress = 0;
+
+        // 1. TÍNH TOÁN LẠI THỨ (DAY) TỪ NGÀY/THÁNG/NĂM
+        //    Hàm này sẽ tự động cập nhật bufferTime[EDIT_TIME_DAY]
+        bufferTime[EDIT_TIME_DAY] = ds3231_calculateDayOfWeek(
+            bufferTime[EDIT_TIME_YEAR],
+            bufferTime[EDIT_TIME_MONTH],
+            bufferTime[EDIT_TIME_DATE]);
+
+        // 2. LƯU TẤT CẢ DỮ LIỆU VÀO DS3231
+        //    (Giờ đây bufferTime[EDIT_TIME_DAY] đã chính xác)
+        ds3231_Write(ADDRESS_SEC, bufferTime[EDIT_TIME_SEC]);
+        ds3231_Write(ADDRESS_MIN, bufferTime[EDIT_TIME_MIN]);
+        ds3231_Write(ADDRESS_HOUR, bufferTime[EDIT_TIME_HOUR]);
+        ds3231_Write(ADDRESS_DAY, bufferTime[EDIT_TIME_DAY]); // Ghi thứ đã được tính
+        ds3231_Write(ADDRESS_DATE, bufferTime[EDIT_TIME_DATE]);
+        ds3231_Write(ADDRESS_MONTH, bufferTime[EDIT_TIME_MONTH]);
+        ds3231_Write(ADDRESS_YEAR, bufferTime[EDIT_TIME_YEAR]);
+
+        // 3. CHUYỂN TRẠNG THÁI
+        lab4_state = NORMAL;
+        initNormal();
+        countResend = 10;
+        triggerResend = 0;
+        triggerCallbackNormal = 0;
+        countTimeResend = 0;
+        disableTask(6);
+        lcdWriteUpdateState(1);
+        return;
+    }
+    if (triggerCallbackNormal == 1)
+    {
+        initNormal();
+        countResend = 10;
+        triggerResend = 0;
+        triggerCallbackNormal = 0;
+        countTimeResend = 0;
+        disableTask(6);
+        lab4_state = NORMAL;
+        lcdWriteUpdateState(1);
+        return;
+    }
+    if (triggerResend == 1)
+    {
+        writeBackBCTimeOut();
+        triggerResend = 0;
+    }
+}
+
+void mainFsmLab5(void)
+{
+    //  BUTTONEN -> save all -> next into MAIN STATE
+    //  BUTTON1 -> change edit element in tw o mode
+    // BUTTONBACK ->  don't need to check  -> alarm to ALARM SKIP -> next state when alarm skip
+
+    //  BUTTONNEXT-> next into MAIN STATE
+    //  BUTTONUP -> edit each  -> up for each kinds of time
+    //  longpress -> update every
+
+    isENpress = buttonFirstPress(BUTTON_EN); //
+    isBACKpress = buttonFirstPress(BUTTON_BACK);
+    isNEXTpress = buttonFirstPress(BUTTON_RIGHT);
+    isUPpress = buttonFirstPress(BUTTON_UP);
+    isOnePress = buttonFirstPress(BUTTON_1);
+
+    // Hiển thị nút nhấn lên LCD
+    if (isENpress)
+        lcd_show_string(0, 160, "EN       ", WHITE, BLACK, 16, 0);
+    else if (isBACKpress)
+        lcd_show_string(0, 160, "BACK     ", WHITE, BLACK, 16, 0);
+    else if (isNEXTpress)
+        lcd_show_string(0, 160, "NEXT     ", WHITE, BLACK, 16, 0);
+    else if (isUPpress)
+        lcd_show_string(0, 160, "UP       ", WHITE, BLACK, 16, 0);
+    else if (isOnePress)
+        lcd_show_string(0, 160, "BUTTON 1 ", WHITE, BLACK, 16, 0);
+    else if (longPressTrigger)
+        lcd_show_string(0, 160, "LONG HOLD", WHITE, BLACK, 16, 0);
+    else
+        lcd_show_string(0, 160, "         ", BLACK, BLACK, 16, 0);
+
+    isTrigger = isENpress || isBACKpress || isNEXTpress || isUPpress || isOnePress || longPressTrigger || triggerResend || triggerCallbackNormal || flag_buffer;
+    if (isTrigger == 0)
+        return;
+    switch (lab4_state)
+    {
+    case NORMAL:
+        /* code */
+        if (isNEXTpress)
+        {
+            isENpress = 0;
+            alarm_state = NO_ALARM;
+            lcd_show_string(0, 40, "ALARM!!!", BLACK, BLACK, 32, 0);
+            lab4_state = EDIT_TIME;
+            initEditTime();
+            return;
+        }
+        break;
+    case EDIT_TIME:
+        if (isNEXTpress)
+        {
+            isENpress = 0;
+            lab4_state = EDIT_ALARM;
+            initEditAlarm();
+            return;
+        }
+        if (isBACKpress)
+        {
+            isBACKpress = 0;
+            return;
+        }
+
+        editTimeFsm();
+
+        break;
+    case EDIT_ALARM:
+        if (isNEXTpress)
+        {
+            isENpress = 0;
+            lab4_state = EDIT_TIME_BY_RS232;
+            initEditTimeByRS232();
+            return;
+        }
+        editAlarmFsm();
+        break;
+    case EDIT_TIME_BY_RS232:
+        if (isNEXTpress)
+        {
+            isENpress = 0;
+            lab4_state = NORMAL;
+            initNormal();
+            disableTask(6);
+            return;
+        }
+        if (isBACKpress || isUPpress || isLongPress)
+        {
+            isUPpress = 0;
+            isLongPress = 0;
+            isBACKpress = 0;
+            return;
+        }
+        editTimeByRS232Fsm();
+        break;
+    default:
+
+        break;
+    }
+}
+void initLab5(void)
+{
+    timer2Init();
+    lcd_init();
+    buttonInit();
+    ds3231_init();
+    lcd_clear(BLACK);
+    uart_init_rs232();
+
+    timerInit(0, 200, 5, ds3231_ReadTime);
+    timerInit(1, 1000, 10, checkAlarm);
+    timerInit(2, 50, 15, buttonScan);
+    timerInit(3, 100, 60, mainFsmLab5);
+    timerInit(4, 250, 250, blinkLed);
+    timerInit(5, 200, 70, updateTimeLCD);
+    timerInit(6, 1000, 1000, taskResend);
+
+    ds3231_ClearAlarmFlags();
+    disableTask(6);
+    disableTask(4);
+    lab4_state = NORMAL;
+    edit_time_state = TIME_SEC;
+    edit_alarm_state = EDIT_ALARM_SEC;
+    initNormal();
+}
+
+void runLab5(void)
+{
+    doTask();
 }

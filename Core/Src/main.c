@@ -131,7 +131,7 @@ int main(void)
   //  Background();
 
   //  initlab3();
-  initLab4();
+  initLab5();
 
   // timer2Init();
   // lcd_init();

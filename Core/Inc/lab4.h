@@ -10,6 +10,9 @@
 /*Include ---------------------------------------------*/
 #include <software_timer.h>
 #include <stdbool.h>
+#include <stdlib.h> // (Cho hàm strtol)
+#include <stdio.h>  // (Cho hàm sprintf)
+#include <limits.h> // (Không bắt buộc, nhưng hữu ích)
 #include "led.h"
 #include "software_timer.h"
 #include "led_7seg.h"
@@ -17,12 +20,15 @@
 #include "picture.h"
 #include "button.h"
 #include "ds3231.h"
+#include "uart.h"
 
 /*Define ---------------------------------------------*/
 #define NORMAL_MODE "NORMAL MODE"
-#define DELETE_FILL "                           "
+#define DELETE_FILL "                             "
 #define EDIT_TIME_MODE "EDIT TIME MODE"
 #define EDIT_ALARM_MODE "EDIT ALARM MODE"
+#define EDIT_TIME_RS232_MODE "EDIT TIME RS232 MODE"
+#define WRONG_VALUE 255
 #define TIME_WARNING 10
 /*Enum   --------------------------------------------*/
 typedef enum
@@ -74,7 +80,7 @@ typedef enum
 extern lAB4_MAIN_STATE lab4_state;
 extern EDIT_TIME_STATE edit_time_state;
 extern EDIT_ALARM_STATE edit_alarm_state;
-
+extern EDIT_TIME_STATE edit_time_rs232_state;
 extern uint8_t bufferTime[7];
 extern uint8_t bufferAlarm[5];
 
@@ -82,6 +88,9 @@ extern uint8_t bufferAlarm[5];
 /*external function*/
 void initLab4(void);
 void runLab4(void);
+
+void initLab5(void);
+void runLab5(void);
 /*Internal function*/
 // Behavior
 //  BUTTONEN -> save all -> next into MAIN STATE
@@ -92,9 +101,11 @@ void runLab4(void);
 //  BUTTONUP -> edit each  -> up for each kinds of time
 //  longpress -> update every
 
-void mainFsm(void);
+void mainFsmLab4(void);
+void mainFsmLab5(void);
 void editTimeFsm(void);
 void editAlarmFsm(void);
+void editTimeByRS232Fsm(void);
 
 /*lcd function*/
 void displayLCD(uint8_t number, TIME_LAB4 pos, uint8_t hiden);
@@ -103,6 +114,7 @@ void displayLCD(uint8_t number, TIME_LAB4 pos, uint8_t hiden);
 void initNormal(void);
 void initEditTime(void);
 void initEditAlarm(void);
+void initEditTimeByRS232(void);
 
 /*support function*/
 
@@ -120,10 +132,13 @@ void updateAlarmHour(void);
 void updateAlarmDate(void);
 void updateAlarmDay(void);
 
-void checkNumber(EDIT_TIME_STATE state);
-
+uint8_t checkNumber(EDIT_TIME_STATE state);
+void writeBackWrongValue(void);
+void writeBackBCTimeOut(void);
+void lcdWriteUpdateState(uint8_t hiden);
 // other Task
-void taskResend(); // Check the main state in
+void taskResend(); // Check the main state if the state rs232 receive buffer and countdown time if no buffer 10s -> have buffer resset counter. Send two times again. Third Checking leads to time out and go to have trigger to Normal mode
+
 void blinkLed();
 void updateTimeLCD();
 void checkAlarm();
